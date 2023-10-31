@@ -1,4 +1,4 @@
-FROM php:7.2.0-fpm
+FROM php:8.1.0-fpm
 MAINTAINER Mofesola Babalola <me@mofesola.com>
 
 RUN apt update && apt install -y wget gnupg
@@ -15,11 +15,45 @@ RUN apt update && apt install -y git \
                                  openssl \
                                  netcat
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-        && docker-php-ext-install pdo pdo_mysql soap mbstring tokenizer xml imap
+RUN apt-get update && \
+    apt-get install -y --force-yes --no-install-recommends \
+        libzip-dev \
+        libz-dev \
+        libzip-dev \
+        libpq-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libfreetype6-dev \
+        libssl-dev \
+        openssh-server \
+        libmagickwand-dev \
+        nano \
+        libxml2-dev \
+        libreadline-dev \
+        libgmp-dev \
+        unzip
 
-RUN pecl install xdebug-2.9.0
+RUN docker-php-ext-install soap
+
+RUN docker-php-ext-install exif
+
+RUN docker-php-ext-install pcntl
+
+RUN docker-php-ext-install zip
+
+RUN docker-php-ext-install pdo_mysql
+
+RUN docker-php-ext-install bcmath
+
+RUN docker-php-ext-install intl
+
+RUN docker-php-ext-install gmp
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install -j$(nproc) imap 
+
+RUN pecl install xdebug
 
 RUN newrelic-install install
 COPY scripts/newrelic.ini /usr/local/etc/php/conf.d/

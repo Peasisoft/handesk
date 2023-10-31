@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             'name'     => 'Admin',
-            'email'    => 'admin@handesk.io',
-            'password' => bcrypt('admin'),
+            'email'    => 'info@peasisoft.com',
+            'password' => bcrypt('123456'),
             'admin'    => true,
         ]);
 
